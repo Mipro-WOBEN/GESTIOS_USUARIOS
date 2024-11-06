@@ -1,0 +1,26 @@
+[
+    {
+        "id_contacto": 1,
+        "nombre": "Rick",
+        "telefono": 987203192,
+        "correo": "rick@gmail.com"
+    },
+    {
+        "id_contacto": 2,
+        "nombre": "Angel",
+        "telefono": 958634283,
+        "correo": "angel@gmail.com"
+    },
+    {
+        "id_contacto": 3,
+        "nombre": "Santiago",
+        "telefono": 980324645,
+        "correo": "santi@gmail.com"
+    },
+    {
+        "id_contacto": 4,
+        "nombre": "Jose",
+        "telefono": 918011169,
+        "correo": "jose@gmail.com"
+    }
+]
