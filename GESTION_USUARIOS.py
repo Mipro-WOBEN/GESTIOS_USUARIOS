@@ -7,10 +7,10 @@ import openpyxl
 def conectar_bd():
     conexion = pyd.connect(
         'DRIVER={ODBC Driver 17 for SQL Server};'
-        'SERVER=DESKTOP-TDUR9AD;'
-        'DATABASE=AdventureWorks2022;'
-        'UID=RICK12;'
-        'PWD=rico4532'
+        'SERVER=[nombre_servidor];'
+        'DATABASE=[base_datos];'
+        'UID=[Nombre_usuario];'
+        'PWD=[contraseña_de_usuario]'
     )
     return conexion
 
