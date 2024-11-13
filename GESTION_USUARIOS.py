@@ -9,7 +9,7 @@ def conectar_bd():
         'DRIVER={ODBC Driver 17 for SQL Server};'
         'SERVER=-------;'
         'DATABASE=-----;'
-        'UID=----;'
+        'UID=---;'
         'PWD=---'
     )
     return conexion
@@ -27,6 +27,7 @@ def agregar_usuario():
         conexion.commit()
         conexion.close()
         messagebox.showinfo("Éxito", "Usuario agregado correctamente")
+        listar_usuarios()  # Actualizar la lista
     else:
         messagebox.showwarning("Advertencia", "Todos los campos son obligatorios")
 
@@ -41,12 +42,29 @@ def listar_usuarios():
         listbox_usuarios.insert(tk.END, f"{usuario[0]} - {usuario[1]} - {usuario[2]}")
     conexion.close()
 
-# Función para eliminar un usuario seleccionado
-def eliminar_usuario():
+# Función para mostrar los datos del usuario seleccionado
+def mostrar_usuario(event):
     seleccion = listbox_usuarios.curselection()
     if seleccion:
         usuario = listbox_usuarios.get(seleccion)  # Ejemplo: "Juan - juan@example.com - 123456789"
         nombre, correo, telefono = usuario.split(" - ")  # Separar valores
+        
+        # Llenar los campos de entrada
+        entry_nombre.delete(0, tk.END)
+        entry_nombre.insert(0, nombre)
+        
+        entry_correo.delete(0, tk.END)
+        entry_correo.insert(0, correo)
+        
+        entry_telefono.delete(0, tk.END)
+        entry_telefono.insert(0, telefono)
+
+# Función para eliminar un usuario seleccionado
+def eliminar_usuario():
+    seleccion = listbox_usuarios.curselection()
+    if seleccion:
+        usuario = listbox_usuarios.get(seleccion)
+        nombre, correo, telefono = usuario.split(" - ")
         
         conexion = conectar_bd()
         cursor = conexion.cursor()
@@ -55,7 +73,7 @@ def eliminar_usuario():
         conexion.close()
         
         messagebox.showinfo("Éxito", "Usuario eliminado correctamente")
-        listar_usuarios()  # Actualiza la lista de usuarios
+        listar_usuarios()
     else:
         messagebox.showwarning("Advertencia", "Seleccione un usuario para eliminar")
 
@@ -63,7 +81,6 @@ def eliminar_usuario():
 def editar_usuario():
     seleccion = listbox_usuarios.curselection()
     if seleccion:
-        
         nombre = entry_nombre.get()
         correo = entry_correo.get()
         telefono = entry_telefono.get()
@@ -72,8 +89,8 @@ def editar_usuario():
             conexion = conectar_bd()
             cursor = conexion.cursor()
             cursor.execute(
-                "UPDATE Usuarios SET Nombre = ?, Correo = ?, Telefono = ? WHERE Nombre = ?",
-                (nombre, correo, telefono, nombre)
+                "UPDATE Usuarios SET Correo = ?, Telefono = ? WHERE Nombre = ?",
+                (correo, telefono, nombre)
             )
             conexion.commit()
             conexion.close()
@@ -91,30 +108,24 @@ def exportar_excel():
         cursor = conexion.cursor()
         cursor.execute("SELECT * FROM Usuarios")
         
-        # Obtener los datos en una lista
         datos = cursor.fetchall()
         conexion.close()
         
-        # Preguntar dónde guardar el archivo
         ruta_archivo = filedialog.asksaveasfilename(defaultextension=".xlsx", 
                                                     filetypes=[("Archivos Excel", "*.xlsx")],
                                                     title="Guardar como")
-        # Verifica si se seleccionó una ruta de archivo
+        
         if ruta_archivo:
             workbook = Op.Workbook()
             sheet = workbook.active
             sheet.title = "Usuarios"
             
-            # Encabezados
             headers = ["Nombre", "Correo", "Teléfono"]
             sheet.append(headers)
             
-            # Agregar datos
             for fila in datos:
                 sheet.append([str(campo) for campo in fila])
 
-            
-            # Guardar el archivo
             workbook.save(ruta_archivo)
             messagebox.showinfo("Éxito", "Usuarios exportados a Excel correctamente")
         else:
@@ -156,6 +167,7 @@ btn_exportar.grid(row=6, column=0, columnspan=2, pady=5)
 # Listbox para mostrar usuarios
 listbox_usuarios = tk.Listbox(root, width=50)
 listbox_usuarios.grid(row=7, column=0, columnspan=2, padx=10, pady=5)
+listbox_usuarios.bind("<<ListboxSelect>>", mostrar_usuario)  # Vincular evento de selección
 
 # Botón para listar usuarios
 btn_listar = tk.Button(root, text="Listar Usuarios", command=listar_usuarios)
