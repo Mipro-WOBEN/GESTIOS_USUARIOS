@@ -8,9 +8,9 @@ def conectar_bd():
     conexion = pyd.connect(
         'DRIVER={ODBC Driver 17 for SQL Server};'
         'SERVER=-------;'
-        'DATABASE=-----;'
-        'UID=---;'
-        'PWD=---'
+        'DATABASE=-------;'
+        'UID=------;'
+        'PWD=------'
     )
     return conexion
 
@@ -40,7 +40,12 @@ def listar_usuarios():
     for usuario in cursor:
         # Formato: Nombre - Correo - Teléfono
         listbox_usuarios.insert(tk.END, f"{usuario[0]} - {usuario[1]} - {usuario[2]}")
+    # Limpiar los campos de entrada
+    entry_nombre.delete(0, tk.END)
+    entry_correo.delete(0, tk.END)
+    entry_telefono.delete(0, tk.END)
     conexion.close()
+
 
 # Función para mostrar los datos del usuario seleccionado
 def mostrar_usuario(event):
