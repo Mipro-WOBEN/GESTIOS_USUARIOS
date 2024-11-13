@@ -1,16 +1,16 @@
 import tkinter as tk
 from tkinter import messagebox, filedialog
 import pyodbc as pyd
-import openpyxl
+import openpyxl as Op
 
 # Conectar a la base de datos
 def conectar_bd():
     conexion = pyd.connect(
         'DRIVER={ODBC Driver 17 for SQL Server};'
-        'SERVER=-----;'
-        'DATABASE=----;'
+        'SERVER=-------;'
+        'DATABASE=-----;'
         'UID=----;'
-        'PWD=----'
+        'PWD=---'
     )
     return conexion
 
@@ -101,17 +101,18 @@ def exportar_excel():
                                                     title="Guardar como")
         # Verifica si se seleccionó una ruta de archivo
         if ruta_archivo:
-            workbook = workbook()
+            workbook = Op.Workbook()
             sheet = workbook.active
             sheet.title = "Usuarios"
             
             # Encabezados
-            headers = ["ID", "Nombre", "Correo", "Teléfono"]
+            headers = ["Nombre", "Correo", "Teléfono"]
             sheet.append(headers)
             
             # Agregar datos
             for fila in datos:
-                sheet.append(fila)
+                sheet.append([str(campo) for campo in fila])
+
             
             # Guardar el archivo
             workbook.save(ruta_archivo)
