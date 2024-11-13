@@ -7,10 +7,10 @@ import openpyxl
 def conectar_bd():
     conexion = pyd.connect(
         'DRIVER={ODBC Driver 17 for SQL Server};'
-        'SERVER=[nombre_servidor];'
-        'DATABASE=[base_datos];'
-        'UID=[Nombre_usuario];'
-        'PWD=[contraseña_de_usuario]'
+        'SERVER=-----;'
+        'DATABASE=----;'
+        'UID=----;'
+        'PWD=----'
     )
     return conexion
 
@@ -35,22 +35,25 @@ def listar_usuarios():
     listbox_usuarios.delete(0, tk.END)  # Limpiar la lista antes de mostrar
     conexion = conectar_bd()
     cursor = conexion.cursor()
-    cursor.execute("SELECT * FROM Usuarios")
+    cursor.execute("SELECT Nombre, Correo, Telefono FROM Usuarios")
     for usuario in cursor:
-        listbox_usuarios.insert(tk.END, usuario)
+        # Formato: Nombre - Correo - Teléfono
+        listbox_usuarios.insert(tk.END, f"{usuario[0]} - {usuario[1]} - {usuario[2]}")
     conexion.close()
 
 # Función para eliminar un usuario seleccionado
 def eliminar_usuario():
     seleccion = listbox_usuarios.curselection()
     if seleccion:
-        usuario = listbox_usuarios.get(seleccion)
-        user_id = usuario[0]  # Suponiendo que el ID es el primer valor de la tupla
+        usuario = listbox_usuarios.get(seleccion)  # Ejemplo: "Juan - juan@example.com - 123456789"
+        nombre, correo, telefono = usuario.split(" - ")  # Separar valores
+        
         conexion = conectar_bd()
         cursor = conexion.cursor()
-        cursor.execute("DELETE FROM Usuarios WHERE ID = ?", (user_id,))
+        cursor.execute("DELETE FROM Usuarios WHERE Nombre = ? AND Correo = ? AND Telefono = ?", (nombre, correo, telefono))
         conexion.commit()
         conexion.close()
+        
         messagebox.showinfo("Éxito", "Usuario eliminado correctamente")
         listar_usuarios()  # Actualiza la lista de usuarios
     else:
